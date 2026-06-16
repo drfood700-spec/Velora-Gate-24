@@ -1,21 +1,34 @@
+import json
 import os
-import requests
-import time
+from telegram.ext import ApplicationBuilder, CommandHandler
 
-def send_message(text):
+ADMIN_ID = 7977349795
+
+# دالة قراءة الإعدادات
+def load_settings():
+    with open('settings.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+async def start(update, context):
+    settings = load_settings()
+    await update.message.reply_text(settings['welcome_message'])
+
+async def admin_panel(update, context):
+    if update.effective_user.id != ADMIN_ID:
+        return
+    settings = load_settings()
+    msg = (f"🛠 لوحة التحكم - Velora Gate\n"
+           f"💰 سعر الصرف الحالي: {settings['exchange_rate']}\n"
+           f"🍎 سعر iCloud: {settings['prices']['icloud']}\n"
+           f"📧 سعر Gmail: {settings['prices']['gmail']}")
+    await update.message.reply_text(msg)
+
+def main():
     TOKEN = os.getenv("BOT_TOKEN")
-    # هذا الرابط يرسل رسالة مباشرة لتليجرام لتجربة الاتصال
-    url = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
-    try:
-        response = requests.get(url)
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-    except Exception as e:
-        print(f"Error: {e}")
+    application = ApplicationBuilder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("panel", admin_panel))
+    application.run_polling()
 
 if __name__ == '__main__':
-    print("جاري اختبار الاتصال...")
-    send_message("Test")
-    # إبقاء السيرفر نشطاً
-    while True:
-        time.sleep(60)
+    main()
