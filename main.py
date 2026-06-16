@@ -2,7 +2,9 @@ import logging
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-import config
+
+# ضع توكن البوت الخاص بك من BotFather بين القوسين وعلامات الاقتباس بالأسفل
+BOT_TOKEN = "8995974815:AAHKBXwgOtRFJlbKUkQAMmS4r5V6UMjwaEA"
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -65,28 +67,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
     data = query.data
-
-    back = InlineKeyboardMarkup([
-        [InlineKeyboardButton("⬅️ رجوع", callback_data="main")]
-    ])
+    back = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ رجوع", callback_data="main")]])
 
     if data == "main":
         await query.edit_message_text(WELCOME_MESSAGE, reply_markup=main_menu(), parse_mode="Markdown")
-
     elif data == "quality":
         await query.edit_message_text(QUALITY_INFO, reply_markup=back, parse_mode="Markdown")
-
     elif data == "exchange":
         await query.edit_message_text(EXCHANGE_RATE_INFO, reply_markup=back)
-
     elif data == "deposit":
         await query.edit_message_text(DEPOSIT_INFO, reply_markup=back)
-
     elif data == "support":
         await query.edit_message_text(SUPPORT_INFO, reply_markup=back)
-
     elif data == "products":
         await query.edit_message_text(
             "📦 المنتجات:",
@@ -96,24 +89,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [InlineKeyboardButton("⬅️ رجوع", callback_data="main")]
             ])
         )
-
     elif data in ["apple", "gmail"]:
-        await query.edit_message_text(
-            f"📦 قسم {data}",
-            reply_markup=back
-        )
+        await query.edit_message_text(f"📦 قسم {data}", reply_markup=back)
 
 def main():
-    token = config.BOT_TOKEN
-    
-    app = Application.builder().token(token).build()
-
+    app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
-
     print("Bot running on Railway...")
-    
-    port = int(os.environ.get("PORT", 8080))
     app.run_polling(close_loop=False)
 
 if __name__ == "__main__":
