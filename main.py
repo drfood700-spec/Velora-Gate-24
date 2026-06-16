@@ -1,37 +1,39 @@
 import logging
 import os
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
 # إعداد السجلات
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 async def start(update, context):
-    await update.message.reply_text("تم تشغيل البوت بنجاح! مرحباً بك في Velora Gate.")
+    await update.message.reply_text("أهلاً بك في متجر Velora Gate!")
 
 async def admin_panel(update, context):
-    await update.message.reply_text("لوحة التحكم تعمل.")
+    await update.message.reply_text("أهلاً بك في لوحة التحكم.")
 
 async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
+    if query.data == "exchange":
+        await query.message.edit_text("قائمة أسعار الصرف...")
 
 def main():
-    # التأكد من التوكن
+    # سحب التوكن من Variables في Railway
     TOKEN = os.getenv("BOT_TOKEN")
+    
     if not TOKEN:
-        print("ERROR: BOT_TOKEN not found!")
+        print("خطأ: يرجى إضافة BOT_TOKEN في إعدادات Railway!")
         return
 
-    try:
-        application = Application.builder().token(TOKEN).build()
-        application.add_handler(CommandHandler("start", start))
-        application.add_handler(CommandHandler("panel", admin_panel))
-        application.add_handler(CallbackQueryHandler(button_handler))
-        
-        print("Velora Gate Bot is now running...")
-        application.run_polling()
-    except Exception as e:
-        print(f"Critical Error: {e}")
+    # استخدام الطريقة الحديثة (ApplicationBuilder) بدلاً من Updater
+    application = ApplicationBuilder().token(TOKEN).build()
+    
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("panel", admin_panel))
+    application.add_handler(CallbackQueryHandler(button_handler))
+    
+    print("Bot is running...")
+    application.run_polling()
 
 if __name__ == '__main__':
     main()
