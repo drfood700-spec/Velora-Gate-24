@@ -2,45 +2,36 @@ import json, os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
-# دالة تحميل البيانات
+ADMIN_ID = 7977349795
+
 def get_data():
     with open('settings.json', 'r', encoding='utf-8') as f: return json.load(f)
 
-async def start(update, context):
-    data = get_data()
-    # نظام إحصائيات بسيط (زيادة عدد الزوار)
-    data['stats']['visitors'] += 1
-    with open('settings.json', 'w', encoding='utf-8') as f: json.dump(data, f, indent=4)
-    
-    await update.message.reply_text(data['bot_config']['welcome_msg'])
-
 async def admin_panel(update, context):
-    if update.effective_user.id != 7977349795: return
-    
+    if update.effective_user.id != ADMIN_ID: return
+    data = get_data()
+    # الأزرار هنا تقرأ الأسماء من ملف الإعدادات
+    btns = data['buttons']
     keyboard = [
-        [InlineKeyboardButton("📝 تعديل سعر الصرف", callback_data='edit_rate')],
-        [InlineKeyboardButton("📦 تعديل طرق الشحن", callback_data='edit_shipping')],
-        [InlineKeyboardButton("📊 إحصائيات البوت", callback_data='show_stats')],
-        [InlineKeyboardButton("💬 تعديل الدعم الفني", callback_data='edit_support')]
+        [InlineKeyboardButton(btns['btn1'], callback_data='edit_rate')],
+        [InlineKeyboardButton(btns['btn2'], callback_data='edit_shipping')],
+        [InlineKeyboardButton(btns['btn3'], callback_data='show_stats')]
     ]
-    await update.message.reply_text("🛠 أهلاً بك في لوحة تحكم Velora Gate:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await update.message.reply_text(data['bot_config']['panel_title'], reply_markup=InlineKeyboardMarkup(keyboard))
 
+# دالة التعامل مع الأزرار العامة
 async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
     data = get_data()
-    
+    # هنا المنطق الخاص بكل زر...
     if query.data == 'show_stats':
-        msg = f"📊 إحصائيات البوت:\nعدد الزوار: {data['stats']['visitors']}"
-        await query.message.edit_text(msg)
-    # هنا ستضيف باقي المنطق لكل زر...
+        await query.message.edit_text(f"📊 {data['stats_text']}")
 
 def main():
     app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
-    app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("panel", admin_panel))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.run_polling()
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__': main()
