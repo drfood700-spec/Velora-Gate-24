@@ -1,34 +1,21 @@
 import os
-import logging
-from telegram.ext import ApplicationBuilder, CommandHandler
+import requests
+import time
 
-# إعداد السجلات لنعرف سبب أي مشكلة في الـ Logs
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-def start(update, context):
-    update.message.reply_text("مرحباً بك! البوت يعمل الآن بنجاح.")
-
-def main():
-    # سحب التوكن من إعدادات Railway
+def send_message(text):
     TOKEN = os.getenv("BOT_TOKEN")
-    
-    if not TOKEN:
-        print("خطأ: يرجى التأكد من إضافة BOT_TOKEN في تبويب Variables في Railway")
-        return
-
-    # إنشاء التطبيق
-    application = ApplicationBuilder().token(TOKEN).build()
-    
-    # إضافة أمر البداية
-    application.add_handler(CommandHandler("start", start))
-    
-    print("البوت يعمل الآن، بانتظار الأوامر...")
-    
-    # تشغيل البوت
-    application.run_polling()
+    # هذا الرابط يرسل رسالة مباشرة لتليجرام لتجربة الاتصال
+    url = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
+    try:
+        response = requests.get(url)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == '__main__':
-    main()
+    print("جاري اختبار الاتصال...")
+    send_message("Test")
+    # إبقاء السيرفر نشطاً
+    while True:
+        time.sleep(60)
