@@ -4,10 +4,10 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- الإعدادات الأساسية ---
-BOT_TOKEN = "8995974815:AAHKBXwgOtRFJlbKUkQAMmS4r5V6UMjwaEA"
+BOT_TOKEN = "8995974815:AAHKBXwgOtRFJ1bKUkQAMMms4r5V6UMjwaEA"
 
-# ضع هنا معرفك الرقمي (Chat ID) لتستطيع الدخول للوحة التحكم
-ADMIN_ID = 7977349795
+# قائمة المعرفات المسموح لها بدخول لوحة التحكم (تضمن عدم حدوث أي خطأ في النوع)
+ADMIN_IDS = [7977349795, "7977349795"]  
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -75,15 +75,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # التحقق من أن المرسل هو الأدمن فقط
-    if update.message.from_user.id == ADMIN_ID:
+    user_id = update.message.from_user.id
+    # التحقق من أن المرسل في قائمة الأدمن
+    if user_id in ADMIN_IDS:
         await update.message.reply_text(
             "⚙️ **مرحباً بك في لوحة تحكم الإدارة لـ Velora Gate**\n\nاختر من الأزرار أدناه للتحكم بالبوت:",
             reply_markup=admin_menu(),
             parse_mode="Markdown"
         )
     else:
-        await update.message.reply_text("❌ عذراً، هذا الأمر مخصص لإدارة البوت فقط.")
+        # رسالة كاشفة لمعرفة الرقم والنوع المسجل في السيرفر
+        await update.message.reply_text(f"❌ عذراً، هذا الأمر مخصص للإدارة فقط.\nرقم حسابك الذي قرأه السيرفر هو: `{user_id}`", parse_mode="Markdown")
 
 # --- معالج الأزرار ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
