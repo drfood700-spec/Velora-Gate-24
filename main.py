@@ -7,7 +7,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 BOT_TOKEN = "8995974815:AAERR9AP_O6EFW5a_KLGQyNck1ovQflzTfs"
 
 # قائمة المعرفات المسموح لها بدخول لوحة التحكم
- ADMIN_IDS = [7977349795, "7977349795", 0]
+ADMIN_IDS = ["7977349795", "0"]
 
 
 logging.basicConfig(
