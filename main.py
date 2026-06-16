@@ -4,18 +4,17 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- الإعدادات الأساسية ---
-BOT_TOKEN = "8995974815:AAERR9AP_O6EFW5a_KLGQyNck1ovQflzTfs"
+BOT_TOKEN = "8995974815:AAEER9AP_O6EFW5a_KLGl6D-Vb7R_5vP1Ag"
 
-# قائمة المعرفات المسموح لها بدخول لوحة التحكم
-ADMIN_IDS = ["7977349795", "0"]
-
+# قائمة المعرفات المسموح لها بدخول لوحة التحكم (نصوص وأرقام)
+ADMIN_IDS = ["7977349795", 7977349795, "0"]  
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-# --- النصوص والبيانات المخزنة مؤقتاً (يمكن تعديلها من اللوحة) ---
+# --- النصوص والبيانات المخزنة مؤقتاً ---
 DATA = {
     "welcome": (
         "✨ *مرحباً بك في بوابة Velora Gate الرقمية* ✨\n\n"
@@ -73,19 +72,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.from_user:
+        return
+        
     user_id = update.message.from_user.id
-    if user_id in ADMIN_IDS:
+    
+    # فحص شامل وصارم يقبل الدخول إذا طابق الـ ID بأي شكل
+    if str(user_id) in [str(adm) for adm in ADMIN_IDS] or user_id == 7977349795 or str(user_id) == "7977349795":
         await update.message.reply_text(
             "⚙️ **مرحباً بك في لوحة تحكم الإدارة لـ Velora Gate**\n\nاختر من الأزرار أدناه للتحكم بالبوت:",
             reply_markup=admin_menu(),
             parse_mode="Markdown"
         )
     else:
-        await update.message.reply_text(f"❌ عذراً، هذا الأمر مخصص للإدارة فقط.\nرقم حسابك: `{user_id}`", parse_mode="Markdown")
+        await update.message.reply_text(
+            f"❌ عذراً، هذا الأمر مخصص للإدارة فقط.\nرقم حسابك الحالي: `{user_id}`", 
+            parse_mode="Markdown"
+        )
 
 # --- معالج الأزرار ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if not query:
+        return
     await query.answer()
     
     if query.data == "exchange":
@@ -100,8 +109,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text("🛍️ **المنتجات المتاحة حالياً:**\n\n• حسابات Apple ID مميزة\n• حسابات iCloud مؤمنة\n• حسابات Gmail موثقة\n\n(لطلب أي حساب، تواصل مع الدعم الفني حالياً لحين تفعيل الدفع التلقائي).", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
     elif query.data == "back_to_main":
         await query.message.edit_text(DATA["welcome"], reply_markup=main_menu(), parse_mode="Markdown")
-    
-    # أزرار الإدارة
     elif query.data in ["edit_exchange", "edit_shipping", "bot_stats"]:
         await query.message.reply_text("🚧 هذه الميزة مخصصة للربط مع قاعدة البيانات وقيد التطوير حالياً.")
 
