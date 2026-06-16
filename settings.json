@@ -1,0 +1,8 @@
+{
+    "exchange_rate": 15000,
+    "welcome_message": "أهلاً بك في متجر Velora Gate، نحن في خدمتك!",
+    "prices": {
+        "icloud": 5,
+        "gmail": 2
+    }
+}
