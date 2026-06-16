@@ -1,8 +1,10 @@
 {
-    "exchange_rate": 15000,
-    "welcome_message": "أهلاً بك في متجر Velora Gate، نحن في خدمتك!",
-    "prices": {
-        "icloud": 5,
-        "gmail": 2
+    "bot_config": {
+        "welcome_msg": "✨ *أهلاً بك في Velora Gate* ✨\n\nنحن بوابتك الرقمية الموثوقة لتجارة الحسابات. اختر طلبك من القائمة أدناه.",
+        "exchange_rate": 15000
+    },
+    "inventory": {
+        "icloud": {"price": 5, "stock": 0},
+        "gmail": {"price": 2, "stock": 0}
     }
 }
