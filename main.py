@@ -1,94 +1,70 @@
-import logging
 import os
+import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# --- الإعدادات الأساسية ---
-BOT_TOKEN = "8995974815:AAEER9AP_O6EFW5a_KLGl6D-Vb7R_5vP1Ag"
+# إعداد السجلات (Logs)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# قائمة المعرفات المسموح لها بدخول لوحة التحكم (نصوص وأرقام)
-ADMIN_IDS = ["7977349795", 7977349795, "0"]  
+# جلب توكن البوت من بيئة التشغيل
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+# المعرف الخاص بك كمسؤول
+ADMIN_IDS = [7977349795]
 
-# --- النصوص والبيانات المخزنة مؤقتاً ---
+# نصوص القوائم والبيانات
 DATA = {
     "welcome": (
-        "✨ *مرحباً بك في بوابة Velora Gate الرقمية* ✨\n\n"
+        "✨ **مرحباً بك في بوابة Velora Gate الرقمية** ✨\n\n"
         "يسعدنا تلبية احتياجاتك لأرقى الحسابات والخدمات الرقمية بجودة واستقرار لا مثيل لهما!\n\n"
-        "💡 *ماذا نقدم؟*\n"
+        "💡 **ماذا نقدم؟**\n"
         "• حسابات Apple ID و iCloud مجهزة ومؤمنة بأعلى المعايير.\n"
         "• حسابات Gmail موثقة وجاهزة للاستخدام الفوري.\n\n"
-        "🚀 *تصفح القائمة أدناه واكتشف الجودة الفائقة بنفسك!*"
+        "🚀 تصفح القائمة أدناه واكتشف الجودة الفائقة بنفسك!"
     ),
-    "quality": (
-        "🛡️ *ضمان الجودة والأمان في Velora Gate* 🛡️\n\n"
-        "🍏 *Apple ID & iCloud:*\n"
-        "• حسابات شخصية جديدة كلياً وغير مستخدمة من قبل.\n"
-        "• مؤمنة بأسئلة أمان مخصصة وإيميل إنقاذ خاص بك.\n"
-        "• ضمان كامل ضد الإغلاق المفاجئ مع دعم التحديث المستمر.\n\n"
-        "📧 *حسابات Gmail:*\n"
-        "• حسابات منشأة بـ IPs نظيفة وموثقة برقم هاتف (تم إزالته بعد التفعيل).\n"
-        "• تدعم تشغيل الإعلانات، القنوات، والخدمات الحساسة بدون مشاكل.\n"
-        "• تشمل تفاصيل الدخول الكاملة مع إيميل استرداد مفعل."
-    ),
-    "shipping": (
-        "⚡ *طرق الشحن والتسليم السريع* ⚡\n\n"
-        "• **التسليم الفوري:** الحسابات الجاهزة يتم إرسال بياناتها لك تلقائياً داخل البوت بمجرد تأكيد الدفع.\n"
-        "• **الطلبات الخاصة:** تستغرق من 5 إلى 30 دقيقة كحد أقصى وفريقنا يتابع معك خطوة بخطوة.\n\n"
-        "💰 *طرق الدفع المتوفرة حالياً:* (يمكنك التنسيق مع الدعم الفني لتسهيل معاملتك)."
-    ),
-    "exchange_rate": "💵 **سعر الصرف الحالي المعتمد في المتجر:**\n\n• 1 دولار رقمي = 1.00 USDT\n• لمعرفة الأسعار بالعملات المحلية، يرجى التواصل مع الإدارة مباشرة."
+    "exchange_rate": "💹 **سعر الصرف الحالي:**\n\nالدفع متوفر حالياً عبر العملات الرقمية (USDT - BEP20).",
+    "shipping": "💳 **طرق الشحن المتوفرة:**\n\nيمكنك الشحن تلقائياً باستخدام محفظة Cwallet لشبكة BEP20.",
+    "quality": "🌟 **ضمان الجودة:**\n\nجميع حساباتنا مضمونة وموثقة وتخضع لأعلى معايير الأمان.",
 }
 
-# --- لوحات المفاتيح (الأزرار) ---
-def main_menu():
-    keyboard = [
-        [InlineKeyboardButton("🛍️ منتجاتنا", callback_data="products")],
-        [InlineKeyboardButton("💹 سعر الصرف", callback_data="exchange"), InlineKeyboardButton("💳 شحن", callback_data="shipping")],
-        [InlineKeyboardButton("🌟 جودة", callback_data="quality"), InlineKeyboardButton("🤝 دعم", callback_data="support")]
-    ]
-    return InlineKeyboardMarkup(keyboard)
+# لوحة مفاتيح القائمة الرئيسية (تم إضافة زر الإحالة)
+main_menu = InlineKeyboardMarkup([
+    [InlineKeyboardButton("🛍️ منتجاتنا", callback_data="products")],
+    [InlineKeyboardButton("💹 سعر الصرف", callback_data="exchange"), InlineKeyboardButton("💳 شحن", callback_data="shipping")],
+    [InlineKeyboardButton("👥 نظام الإحالة (كسب رصيد)", callback_data="referral")],
+    [InlineKeyboardButton("🌟 جودة", callback_data="quality"), InlineKeyboardButton("🤝 دعم", callback_data="support")]
+])
 
-def admin_menu():
-    keyboard = [
-        [InlineKeyboardButton("📝 تعديل سعر الصرف", callback_data="edit_exchange")],
-        [InlineKeyboardButton("🚚 تعديل طرق الشحن", callback_data="edit_shipping")],
-        [InlineKeyboardButton("📊 إحصائيات البوت", callback_data="bot_stats")],
-        [InlineKeyboardButton("🔙 العودة للقائمة الرئيسية", callback_data="back_to_main")]
-    ]
-    return InlineKeyboardMarkup(keyboard)
+# لوحة مفاتيح الإدارة (Admin Panel)
+admin_menu = InlineKeyboardMarkup([
+    [InlineKeyboardButton("📝 تعديل سعر الصرف", callback_data="edit_exchange")],
+    [InlineKeyboardButton("📦 تعديل طرق الشحن", callback_data="edit_shipping")],
+    [InlineKeyboardButton("📊 إحصائيات البوت", callback_data="bot_stats")],
+    [InlineKeyboardButton("⬅️ العودة للقائمة الرئيسية", callback_data="back_to_main")]
+])
 
-# --- الأوامر ---
+# زر العودة للقائمة الرئيسية للزبائن
+back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ عودة", callback_data="back_to_main")]])
+
+# --- معالجة الأوامر ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message and update.message.from_user:
-        await update.message.reply_text(
-            DATA["welcome"],
-            reply_markup=main_menu(),
-            parse_mode="Markdown"
-        )
+    args = context.args
+    user_id = update.effective_user.id
+    
+    # فحص إذا كان المستخدم دخل عبر رابط إحالة شخص آخر
+    if args and args[0].startswith("ref_"):
+        referrer_id = args[0].replace("ref_", "")
+        # تنبيه برمجياً في الـ Logs (سيتم ربطها بالكامل بقاعدة البيانات بعد امتحاناتك)
+        logging.info(f"المستخدم {user_id} دخل عن طريق إحالة من الحساب: {referrer_id}")
+        
+    await update.message.reply_text(DATA["welcome"], reply_markup=main_menu, parse_mode="Markdown")
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.from_user:
-        return
-        
-    user_id = update.message.from_user.id
-    
-    # فحص شامل وصارم يقبل الدخول إذا طابق الـ ID بأي شكل
-    if str(user_id) in [str(adm) for adm in ADMIN_IDS] or user_id == 7977349795 or str(user_id) == "7977349795":
-        await update.message.reply_text(
-            "⚙️ **مرحباً بك في لوحة تحكم الإدارة لـ Velora Gate**\n\nاختر من الأزرار أدناه للتحكم بالبوت:",
-            reply_markup=admin_menu(),
-            parse_mode="Markdown"
-        )
+    user_id = update.effective_user.id
+    if user_id in ADMIN_IDS:
+        await update.message.reply_text("🛠️ **أهلاً بك في لوحة تحكم الإدارة لـ Velora Gate:**", reply_markup=admin_menu, parse_mode="Markdown")
     else:
-        await update.message.reply_text(
-            f"❌ عذراً، هذا الأمر مخصص للإدارة فقط.\nرقم حسابك الحالي: `{user_id}`", 
-            parse_mode="Markdown"
-        )
+        await update.message.reply_text(f"❌ عذراً، هذا الأمر مخصص للإدارة فقط.\nرقم حسابك الحالي: `{user_id}`", parse_mode="Markdown")
 
 # --- معالج الأزرار ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -96,29 +72,43 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not query:
         return
     await query.answer()
-    
+
+    user_id = query.from_user.id
+    bot_username = context.bot.username
+
     if query.data == "exchange":
-        await query.message.edit_text(DATA["exchange_rate"], reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
+        await query.message.edit_text(DATA["exchange_rate"], reply_markup=back_markup, parse_mode="Markdown")
     elif query.data == "shipping":
-        await query.message.edit_text(DATA["shipping"], reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
+        await query.message.edit_text(DATA["shipping"], reply_markup=back_markup, parse_mode="Markdown")
     elif query.data == "quality":
-        await query.message.edit_text(DATA["quality"], reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
+        await query.message.edit_text(DATA["quality"], reply_markup=back_markup, parse_mode="Markdown")
     elif query.data == "support":
-        await query.message.edit_text("🤝 **الدعم الفني لـ Velora Gate:**\n\nلأي استفسار أو مشكلة، تواصل مباشرة مع الإدارة: @Velora_Admin", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
+        await query.message.edit_text("🤝 **الدعم الفني لـ Velora Gate:**\n\nللإستفسار أو مواجهة أي مشكلة، تواصل مع الإدارة مباشرة.", reply_markup=back_markup, parse_mode="Markdown")
     elif query.data == "products":
-        await query.message.edit_text("🛍️ **المنتجات المتاحة حالياً:**\n\n• حسابات Apple ID مميزة\n• حسابات iCloud مؤمنة\n• حسابات Gmail موثقة\n\n(لطلب أي حساب، تواصل مع الدعم الفني حالياً لحين تفعيل الدفع التلقائي).", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 الخلف", callback_data="back_to_main")]]), parse_mode="Markdown")
+        await query.message.edit_text("🛍️ **المنتجات المتاحة حالياً:**\n\n• حسابات Apple ID\n• حسابات iCloud\n• حسابات Gmail", reply_markup=back_markup, parse_mode="Markdown")
+    
+    elif query.data == "referral":
+        # توليد رابط إحالة حقيقي لكل مستخدم بناءً على الـ ID الخاص به
+        ref_link = f"https://t.me/{bot_username}?start=ref_{user_id}"
+        ref_text = (
+            "👥 **نظام الإحالة كسب 10% رصيد مجاني!**\n\n"
+            "شارك رابط الإحالة الخاص بك مع أصدقائك، وعند قيام أي شخص بالشحن عن طريقك، ستكسب فوراً **10%** من قيمة شحنه تضاف إلى رصيدك تلقائياً!\n\n"
+            f"🔗 **رابط الإحالة الفريد الخاص بك:**\n`{ref_link}`\n\n"
+            "انقر على الرابط أعلاه لنسخه ومشاركته فوراً!"
+        )
+        await query.message.edit_text(ref_text, reply_markup=back_markup, parse_mode="Markdown")
+        
     elif query.data == "back_to_main":
-        await query.message.edit_text(DATA["welcome"], reply_markup=main_menu(), parse_mode="Markdown")
+        await query.message.edit_text(DATA["welcome"], reply_markup=main_menu, parse_mode="Markdown")
     elif query.data in ["edit_exchange", "edit_shipping", "bot_stats"]:
-        await query.message.reply_text("🚧 هذه الميزة مخصصة للربط مع قاعدة البيانات وقيد التطوير حالياً.")
+        await query.message.reply_text("🚧 هذه الميزة قيد التطوير حالياً للربط مع قاعدة البيانات.")
 
 # --- التشغيل الأساسي ---
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
     
     application.add_handler(CommandHandler("start", start))
-   application.add_handler(CommandHandler("panel", admin_panel))
-
+    application.add_handler(CommandHandler("panel", admin_panel))
     application.add_handler(CallbackQueryHandler(button_handler))
     
     application.run_polling()
