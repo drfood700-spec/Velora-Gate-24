@@ -103,15 +103,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data in ["edit_exchange", "edit_shipping", "bot_stats"]:
         await query.message.reply_text("🚧 هذه الميزة قيد التطوير حالياً للربط مع قاعدة البيانات.")
 
-# --- التشغيل الأساسي ---
-def main():
-    application = Application.builder().token(BOT_TOKEN).build()
-    
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("panel", admin_panel))
-    application.add_handler(CallbackQueryHandler(button_handler))
-    
-    application.run_polling()
-
 if __name__ == '__main__':
+    print("Starting bot...")
     main()
