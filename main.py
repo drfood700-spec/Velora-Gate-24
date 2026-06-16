@@ -1,38 +1,33 @@
-import logging
 import os
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
+import logging
+from telegram.ext import ApplicationBuilder, CommandHandler
 
-# إعداد السجلات
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+# إعداد السجلات لنعرف سبب أي مشكلة في الـ Logs
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-async def start(update, context):
-    await update.message.reply_text("أهلاً بك في متجر Velora Gate!")
-
-async def admin_panel(update, context):
-    await update.message.reply_text("أهلاً بك في لوحة التحكم.")
-
-async def button_handler(update, context):
-    query = update.callback_query
-    await query.answer()
-    if query.data == "exchange":
-        await query.message.edit_text("قائمة أسعار الصرف...")
+def start(update, context):
+    update.message.reply_text("مرحباً بك! البوت يعمل الآن بنجاح.")
 
 def main():
-    # سحب التوكن من Variables في Railway
+    # سحب التوكن من إعدادات Railway
     TOKEN = os.getenv("BOT_TOKEN")
     
     if not TOKEN:
-        print("خطأ: يرجى إضافة BOT_TOKEN في إعدادات Railway!")
+        print("خطأ: يرجى التأكد من إضافة BOT_TOKEN في تبويب Variables في Railway")
         return
 
-    # استخدام الطريقة الحديثة (ApplicationBuilder) بدلاً من Updater
+    # إنشاء التطبيق
     application = ApplicationBuilder().token(TOKEN).build()
     
+    # إضافة أمر البداية
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("panel", admin_panel))
-    application.add_handler(CallbackQueryHandler(button_handler))
     
-    print("Bot is running...")
+    print("البوت يعمل الآن، بانتظار الأوامر...")
+    
+    # تشغيل البوت
     application.run_polling()
 
 if __name__ == '__main__':
