@@ -1,10 +1,19 @@
 {
+    "admin_id": 7977349795,
     "bot_config": {
-        "welcome_msg": "✨ *أهلاً بك في Velora Gate* ✨\n\nنحن بوابتك الرقمية الموثوقة لتجارة الحسابات. اختر طلبك من القائمة أدناه.",
-        "exchange_rate": 15000
+        "welcome_msg": "أهلاً بك في متجر Velora Gate المتطور.",
+        "exchange_rate": 15000,
+        "shipping_methods": "شحن فوري عبر تليجرام",
+        "support_info": {
+            "name": "فريق الدعم الفني",
+            "username": "@Support_Velora"
+        }
+    },
+    "stats": {
+        "visitors": 0
     },
     "inventory": {
-        "icloud": {"price": 5, "stock": 0},
-        "gmail": {"price": 2, "stock": 0}
+        "icloud": {"price": 5, "stock": 10},
+        "gmail": {"price": 2, "stock": 20}
     }
 }
