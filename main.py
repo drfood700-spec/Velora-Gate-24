@@ -1,4 +1,5 @@
 import logging
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 import config
@@ -103,13 +104,17 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 def main():
-    app = Application.builder().token(config.BOT_TOKEN).build()
+    token = config.BOT_TOKEN
+    
+    app = Application.builder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
 
-    print("Bot running...")
-    app.run_polling()
+    print("Bot running on Railway...")
+    
+    port = int(os.environ.get("PORT", 8080))
+    app.run_polling(close_loop=False)
 
 if __name__ == "__main__":
     main()
