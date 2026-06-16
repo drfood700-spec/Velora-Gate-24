@@ -1,42 +1,37 @@
 import logging
-from telegram import Update
+import os
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
-ADMIN_ID = 7977349795
 # إعداد السجلات
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# --- الدوال الخاصة بمتجرك ---
+# --- الدوال الخاصة بك (يجب أن تكون معرفة هنا) ---
 async def start(update, context):
-    await update.message.reply_text("أهلاً بك في Velora Gate!")
+    await update.message.reply_text("أهلاً بك في متجر Velora Gate!")
 
 async def admin_panel(update, context):
-    await update.message.reply_text("مرحباً بك في لوحة التحكم.")
+    await update.message.reply_text("أهلاً بك في لوحة التحكم.")
 
 async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
-    
-    # هنا تم دمج المنطق الذي كان في صورك السابقة
+    # هنا تضع منطق الأزرار الخاص بك
     if query.data == "exchange":
         await query.message.edit_text("قائمة أسعار الصرف...")
-    elif query.data == "shipping":
-        await query.message.edit_text("معلومات الشحن...")
-    elif query.data == "products":
-        await query.message.edit_text("المنتجات المتاحة حالياً: Apple ID...")
-    elif query.data == "support":
-        await query.message.edit_text("تواصل مع الدعم الفني لـ Velora Gate مباشرة")
     elif query.data == "back_to_main":
-        await query.message.edit_text("أهلاً بك في القائمة الرئيسية.")
+        await query.message.edit_text("الرئيسية")
 
-# --- دالة التشغيل ---
+# --- تعريف دالة الـ main ---
 def main():
-    # ضع التوكن الخاص بك هنا بين علامتي التنصيص
-    TOKEN = "8995974815:AAERR9AP_O6EFW5a_KLGQyNck1ovQflzTfs"
+    # استخدام التوكن من المتغيرات في Railway
+    TOKEN = os.getenv("BOT_TOKEN")
     
+    if not TOKEN:
+        print("خطأ: لم يتم العثور على BOT_TOKEN في المتغيرات!")
+        return
+
     application = Application.builder().token(TOKEN).build()
     
-    # إضافة الأوامر
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("panel", admin_panel))
     application.add_handler(CallbackQueryHandler(button_handler))
@@ -44,5 +39,6 @@ def main():
     print("Bot is starting now...")
     application.run_polling()
 
+# --- التشغيل النهائي ---
 if __name__ == '__main__':
     main()
