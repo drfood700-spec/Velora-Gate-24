@@ -1,34 +1,29 @@
 import json
 import os
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler
 
 ADMIN_ID = 7977349795
 
-# دالة قراءة الإعدادات
-def load_settings():
+def load_data():
     with open('settings.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 async def start(update, context):
-    settings = load_settings()
-    await update.message.reply_text(settings['welcome_message'])
+    data = load_data()
+    # الرسالة الترحيبية بتنسيق احترافي
+    await update.message.reply_text(data['bot_config']['welcome_msg'], parse_mode='Markdown')
 
 async def admin_panel(update, context):
     if update.effective_user.id != ADMIN_ID:
         return
-    settings = load_settings()
-    msg = (f"🛠 لوحة التحكم - Velora Gate\n"
-           f"💰 سعر الصرف الحالي: {settings['exchange_rate']}\n"
-           f"🍎 سعر iCloud: {settings['prices']['icloud']}\n"
-           f"📧 سعر Gmail: {settings['prices']['gmail']}")
-    await update.message.reply_text(msg)
+    
+    data = load_data()
+    msg = (f"⚙️ *لوحة تحكم Velora Gate*\n\n"
+           f"💰 سعر الصرف: `{data['bot_config']['exchange_rate']}`\n\n"
+           f"🍎 iCloud: `{data['inventory']['icloud']['price']}$` | المخزون: `{data['inventory']['icloud']['stock']}`\n"
+           f"📧 Gmail: `{data['inventory']['gmail']['price']}$` | المخزون: `{data['inventory']['gmail']['stock']}`")
+    
+    await update.message.reply_text(msg, parse_mode='Markdown')
 
-def main():
-    TOKEN = os.getenv("BOT_TOKEN")
-    application = ApplicationBuilder().token(TOKEN).build()
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("panel", admin_panel))
-    application.run_polling()
-
-if __name__ == '__main__':
-    main()
+# ... تابع إضافة باقي الدوال ...
