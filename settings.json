@@ -1,19 +1,7 @@
 {
-  "admin_id": 7977349795,
-  "currency_rate": 12500,
-  "welcome_message": "🌟 أهلاً بك في متجرنا المتخصص!\n\nنقدم لك أفضل الحسابات الموثوقة لـ:\n✅ Apple ID\n✅ Gmail Account\n✅ iCloud\n\nاختر ما يناسبك واستمتع بخدماتنا المميزة.",
-  "buttons": {
-    "products": "📦 منتجاتنا",
-    "exchange_rate": "💱 سعر الصرف",
-    "referral": "🎁 برنامج الإحالة",
-    "balance": "💰 رصيدي",
-    "recharge": "💳 شحن رصيدي",
-    "support": "📞 تواصل مع الدعم"
-  },
-  "payment_methods": {
-    "siratel": "0999999999",
-    "shamcash": "0999999999",
-    "bep20": "0xYourWalletAddressHere"
-  },
-  "support_contact": "@SupportUsername"
+    "bot_token": "PUT_YOUR_TOKEN_HERE",
+    "admin_id": 7977349795,
+    "exchange_rate": 12000,
+    "referral_percent": 10,
+    "support_username": "@Support"
 }
