@@ -1,17 +1,1 @@
-{
-  "Apple ID": {
-    "price_per_unit": 10,
-    "stock": 100,
-    "active": true
-  },
-  "Gmail Account": {
-    "price_per_unit": 5,
-    "stock": 200,
-    "active": true
-  },
-  "iCloud": {
-    "price_per_unit": 12,
-    "stock": 50,
-    "active": true
-  }
-}
+{}
