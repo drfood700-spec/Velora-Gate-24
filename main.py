@@ -717,8 +717,7 @@ def main():
     application = (
         Application.builder()
         .token(BOT_TOKEN)
-        .rate_limiter(AIORateLimiter())
-        .build()
+        # .rate_limiter(AIORateLimiter())  # معلق مؤقتاً
     )
 
     # معالج الأوامر
